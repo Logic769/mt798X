@@ -1,0 +1,53 @@
+路由器断电，使用USB转TTL（建议使用3.3V电平的）连接路由器TTL接口。
+运行“打开设备管理器命令.bat”在设备管理器查看USB转TTL对应的COM口号。这个COM口不能被其他程序占用。
+运行“MT798X串口TTL救砖命令.bat”，选择对应型号的fip序号，选择正常波特率，然后输入COM口号回车即可。
+如果波特率报错，则尝试低波特率。
+
+注意mtk_uartboot文件夹中的bl2是ram boot bl2，不是闪存用的bl2！！！
+除了京东云百里jdcloud_re-cp-03要刷解锁Secure Boot的bl2，一般恢复bl2，刷原厂即可。
+eMMC机型在uboot的bl2.html刷bl2限制上传文件大小1MB。
+还有bl-mt798x仓库编译xdr4288/608x的bl2和fip是没有开NMBM，恢复bl2的话根据自己情况考虑。
+
+也可以手动运行mtk_uartboot命令，详见mtk_uartboot文件夹里的教程。
+
+### 1.运行命令后会出现等待握手信息：
+mtk_uartboot - 0.1.1
+Using serial port: COM3
+Handshake...
+
+### 2.然后路由器上电开机，握手成功CMD会输出sending payload信息开始发送bl2：
+hw code: 0x7986
+hw sub code: 0x8a00
+hw ver: 0xca01
+sw ver: 0x1
+Baud rate set to 115200
+sending payload to 0x201000...
+
+### 3.发送完成加载bl2会输出信息同时开始发送fip：
+Checksum: 0x3c82
+Setting baudrate back to 115200
+Jumping to 0x201000 in aarch64...
+Waiting for BL2. Message below:
+==================================
+NOTICE:  BL2: v2.10.0   (release):v2.4-rc0-5845-gbacca82a8-dirty
+NOTICE:  BL2: Built : 20:30:05, Feb  2 2024
+NOTICE:  WDT: Cold boot
+NOTICE:  WDT: disabled
+NOTICE:  CPU: MT7986 (2000MHz)
+NOTICE:  EMI: Using DDR4 settings
+NOTICE:  EMI: Detected DRAM size: 1024MB
+NOTICE:  EMI: complex R/W mem test passed
+NOTICE:  Starting UART download handshake ...
+==================================
+BL2 UART DL version: 0x10
+Baudrate set to: 115200
+### 此时在上传fip，600KB的fip使用1500000波特率只需要几秒钟，低波特率则大概45秒。
+### 此时如果需要进入uboot webui可以直接按住reset按键不放，等待uboot指示灯闪烁并进入uboot。
+### 如果没有按reset会直接启动固件，进入固件再恢复刷砖的分区也行。
+
+### 4.fip加载完后输出：
+FIP sent.
+==================================
+NOTICE:  Received FIP 0x90b59 @ 0x40400000 ...
+==================================
+### 此时程序已经执行完，已经加载uboot，如果没有按reset会直接启动固件，按reset就进入uboot webui恢复刷砖的文件。

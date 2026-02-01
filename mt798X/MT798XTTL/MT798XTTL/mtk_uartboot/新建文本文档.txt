@@ -1,0 +1,6 @@
+ ls -l /dev/ttyUSB0
+
+.\mtk_uartboot.exe -s COM3 -p .\mt7981\mt7981-ddr4-bl2.bin -a -f fip.bin --brom-load-baudrate 115200 --bl2-load-baudrate 115200
+
+tftpput /192.168.1.254/preloader.nand.bl2.bin /tmp preloader.nand.bl2.bin
+tftpboot /192.168.1.254/immortalwrt-mediatek-mt7981-cmcc_rax3000m-squashfs-factory.bin
